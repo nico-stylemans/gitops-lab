@@ -4,6 +4,8 @@ on:
   push:
     branches: [ main ]
     paths: [deployVM.tf, .github/workflows/terraform.yml]
+    
+  workflow_dispatch:
 
 env:
   TF_VAR_subscription_id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
