@@ -3,7 +3,7 @@ name: 'Terraform'
 on:
   push:
     branches: [ main ]
-    paths: [deployVM.tf, .github/workflows/terraformcd.yml]
+    paths: [deployVM.tf, .github/workflows/terrafromcd.yml]
     
   workflow_dispatch:
 
