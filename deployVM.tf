@@ -1,14 +1,25 @@
 terraform {
-  backend "azurerm" {
-    resource_group_name   = "DevOpsConfig"
-    storage_account_name  = "saTerraform"
-    container_name        = "terraform"
-    key                   = "terraform.tfstate"
+  backend "remote" {
+    organization = "nicostylemans"
+ 
+    workspaces {
+      name = "U2UAzureDeploy"
+    }
+  }
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.46.0"
+    }
   }
 }
 
 provider "azurerm" {
     features { }
+    subscription_id = var.subscription_id
+    client_id       = var.client_id
+    client_secret   = var.client_secret
+    tenant_id       = var.tenant_id
 }
 
 variable "RG" {
@@ -27,14 +38,15 @@ variable "SUBNET_ADDRESS" {
     default = "10.10.0.0/24"
 }
 
-data "azurerm_key_vault" "keyvault" {
-    name = "kvHRSConfig"
-    resource_group_name = "DevOpsConfig" 
+variable "client_id" {
 }
-
-data "azurerm_key_vault_secret" "adminpwd" {
-    name = "adminpwd"
-    key_vault_id = data.azurerm_key_vault.keyvault.id
+variable "client_secret" {
+}
+variable "subscription_id" {
+}
+variable "tenant_id" {
+}
+variable "admin_pwd" {
 }
 
 resource "azurerm_resource_group" "RG" {
@@ -139,7 +151,7 @@ resource "azurerm_virtual_machine" "VM1" {
     os_profile {
       computer_name = "VM1"
       admin_username = "u2uadmin"
-      admin_password = data.azurerm_key_vault_secret.adminpwd.value
+      admin_password = var.admin_pwd
     }
 
     os_profile_windows_config {
